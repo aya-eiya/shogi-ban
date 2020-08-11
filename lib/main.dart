@@ -133,6 +133,11 @@ class ShogiBanState extends State<ShogiBan> {
             .idOfPosition(const _KomaPosition(Owner.gote, _Position(3, 1)));
         board.moveTo(id, const _KomaPosition(Owner.gote, _Position(2, 2)));
       },
+      () {
+        // ▲8八角
+        final _KomaId id = board.idOfMochiGoma(Owner.sente, Koma.kaku);
+        board.moveTo(id, const _KomaPosition(Owner.sente, _Position(8, 8)));
+      },
     ];
   }
 
@@ -523,6 +528,17 @@ class _Board {
   _KomaId idOfPosition(_KomaPosition position) {
     final Iterable<MapEntry<_KomaId, _Koma>> a = _komaMap.entries.where(
         (MapEntry<_KomaId, _Koma> e) => e.value.komaPosition == position);
+    if (a.isEmpty) {
+      return null;
+    }
+    return a.first.key;
+  }
+
+  _KomaId idOfMochiGoma(Owner owner, Koma koma) {
+    final Iterable<MapEntry<_KomaId, _Koma>> a = _komaMap.entries.where(
+        (MapEntry<_KomaId, _Koma> e) =>
+            e.value.komaPosition == _KomaPosition(owner, _Position.taken) &&
+            e.value.koma == koma);
     if (a.isEmpty) {
       return null;
     }
