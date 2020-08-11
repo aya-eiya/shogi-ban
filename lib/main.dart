@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,9 +17,9 @@ class MyApp extends StatelessWidget {
         ),
         home: Scaffold(
           appBar: AppBar(
-            title: Text('Shogi-Ban Demo Page'),
+            title: const Text('Shogi-Ban Demo Page'),
           ),
-          body: Column(children: <Widget>[
+          body: Column(children: const <Widget>[
             Padding(padding: EdgeInsets.only(top: 12)),
             ShogiBan(),
           ]),
@@ -28,9 +30,18 @@ class MyApp extends StatelessWidget {
 T asIs<T>(T e) => e;
 
 class ShogiBan extends StatefulWidget {
-  _Board board = _Board([]);
-  List<Map<_KomaId, _Koma>> history = [];
-  List<void Function()> scenario = [];
+  const ShogiBan({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => ShogiBanState();
+}
+
+class ShogiBanState extends State<ShogiBan> {
+  _Board board = _Board(<_Koma>[]);
+  final List<Map<_KomaId, _Koma>> history = <Map<_KomaId, _Koma>>[];
+  List<void Function()> scenario = <void Function()>[];
 
   void pushHistory() {
     history.add(board.snapShot);
@@ -53,87 +64,81 @@ class ShogiBan extends StatefulWidget {
   void init() {
     history.clear();
     board = _Board(<_Koma>[
-      ...[1, 2, 3, 4, 5, 6, 7, 8, 9]
-          .map((int x) => [
+      ...<int>[1, 2, 3, 4, 5, 6, 7, 8, 9]
+          .map((int x) => <_Koma>[
                 _Koma(Koma.fu, _KomaPosition(Owner.gote, _Position(x, 3))),
                 _Koma(Koma.fu, _KomaPosition(Owner.sente, _Position(x, 7))),
               ])
           .expand(asIs),
-      ...[
+      ...const <_Koma>[
         _Koma(Koma.kyoSha, _KomaPosition(Owner.gote, _Position(1, 1))),
         _Koma(Koma.kyoSha, _KomaPosition(Owner.gote, _Position(9, 1))),
         _Koma(Koma.kyoSha, _KomaPosition(Owner.sente, _Position(1, 9))),
         _Koma(Koma.kyoSha, _KomaPosition(Owner.sente, _Position(9, 9))),
       ],
-      ...[
+      ...const <_Koma>[
         _Koma(Koma.keiMa, _KomaPosition(Owner.gote, _Position(2, 1))),
         _Koma(Koma.keiMa, _KomaPosition(Owner.gote, _Position(8, 1))),
         _Koma(Koma.keiMa, _KomaPosition(Owner.sente, _Position(2, 9))),
         _Koma(Koma.keiMa, _KomaPosition(Owner.sente, _Position(8, 9))),
       ],
-      ...[
+      ...const <_Koma>[
         _Koma(Koma.ginSho, _KomaPosition(Owner.gote, _Position(3, 1))),
         _Koma(Koma.ginSho, _KomaPosition(Owner.gote, _Position(7, 1))),
         _Koma(Koma.ginSho, _KomaPosition(Owner.sente, _Position(3, 9))),
         _Koma(Koma.ginSho, _KomaPosition(Owner.sente, _Position(7, 9))),
       ],
-      ...[
+      ...const <_Koma>[
         _Koma(Koma.kinSho, _KomaPosition(Owner.gote, _Position(4, 1))),
         _Koma(Koma.kinSho, _KomaPosition(Owner.gote, _Position(6, 1))),
         _Koma(Koma.kinSho, _KomaPosition(Owner.sente, _Position(4, 9))),
         _Koma(Koma.kinSho, _KomaPosition(Owner.sente, _Position(6, 9))),
       ],
-      ...[
+      ...const <_Koma>[
         _Koma(Koma.hiSha, _KomaPosition(Owner.gote, _Position(8, 2))),
         _Koma(Koma.kaku, _KomaPosition(Owner.gote, _Position(2, 2))),
         _Koma(Koma.hiSha, _KomaPosition(Owner.sente, _Position(2, 8))),
         _Koma(Koma.kaku, _KomaPosition(Owner.sente, _Position(8, 8))),
       ],
-      ...[
+      ...const <_Koma>[
         _Koma(Koma.ohSho, _KomaPosition(Owner.gote, _Position(5, 1))),
         _Koma(Koma.gyokuSho, _KomaPosition(Owner.sente, _Position(5, 9))),
       ],
     ]);
     // TODO: 棋譜から以下のシナリオ関数を生成する
-    scenario = [
+    scenario = <void Function()>[
       () {
         // ▲6六歩
-        final _KomaId id =
-            board.idOfPosition(_KomaPosition(Owner.sente, _Position(7, 7)));
-        board.moveTo(id, _KomaPosition(Owner.sente, _Position(7, 6)));
+        final _KomaId id = board
+            .idOfPosition(const _KomaPosition(Owner.sente, _Position(7, 7)));
+        board.moveTo(id, const _KomaPosition(Owner.sente, _Position(7, 6)));
       },
       () {
         // △3四歩
-        final _KomaId id =
-            board.idOfPosition(_KomaPosition(Owner.gote, _Position(3, 3)));
-        board.moveTo(id, _KomaPosition(Owner.gote, _Position(3, 4)));
+        final _KomaId id = board
+            .idOfPosition(const _KomaPosition(Owner.gote, _Position(3, 3)));
+        board.moveTo(id, const _KomaPosition(Owner.gote, _Position(3, 4)));
       },
       () {
         // ▲2二角成
-        final _KomaId id =
-            board.idOfPosition(_KomaPosition(Owner.sente, _Position(8, 8)));
-        board.moveTo(id, _KomaPosition(Owner.sente, _Position(2, 2)));
-        board.nari(id);
+        final _KomaId id = board
+            .idOfPosition(const _KomaPosition(Owner.sente, _Position(8, 8)));
+        board
+          ..moveTo(id, const _KomaPosition(Owner.sente, _Position(2, 2)))
+          ..nari(id);
       },
       () {
         // △同銀
-        final _KomaId id =
-            board.idOfPosition(_KomaPosition(Owner.gote, _Position(3, 1)));
-        board.moveTo(id, _KomaPosition(Owner.gote, _Position(2, 2)));
+        final _KomaId id = board
+            .idOfPosition(const _KomaPosition(Owner.gote, _Position(3, 1)));
+        board.moveTo(id, const _KomaPosition(Owner.gote, _Position(2, 2)));
       },
     ];
   }
 
   @override
-  State<StatefulWidget> createState() => ShogiBanState();
-}
-
-class ShogiBanState extends State<ShogiBan> {
-  _Board get board => widget.board;
-
-  @override
   void initState() {
-    widget.init();
+    init();
     super.initState();
   }
 
@@ -142,7 +147,9 @@ class ShogiBanState extends State<ShogiBan> {
     final MediaQueryData mq = MediaQuery.of(context);
     final Size size = mq.size;
     final EdgeInsets pad = mq.padding;
-    final double boardSize = size.width - pad.left - pad.right - 128;
+    final double width = size.width - pad.left - pad.right;
+    const double sidePadding = 32;
+    final double boardSize = width - sidePadding * 2;
     return Center(
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -160,26 +167,27 @@ class ShogiBanState extends State<ShogiBan> {
                         height: boardSize / 4,
                         child: Wrap(
                           children: <Widget>[
-                            ...board.goteMochiGoma.map((e) => _KomaTip(
+                            ...board.goteMochiGoma.map((_Koma e) => _KomaTip(
                                 e.koma, boardSize / 9,
                                 key: ValueKey<_KomaId>(board.idOf(e))))
                           ],
                         )))),
-            Padding(padding: EdgeInsets.only(top: 12)),
+            const Padding(padding: EdgeInsets.only(top: 12)),
             Container(
                 width: boardSize,
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    textDirection: TextDirection.rtl,
-                    children: '1,2,3,4,5,6,7,8,9'
+                    children: '9,8,7,6,5,4,3,2,1'
                         .split(',')
-                        .map((x) => Text(x))
+                        .map((String x) => SizedBox(
+                            width: boardSize / 9,
+                            child: Center(child: Text(x))))
                         .toList())),
             Container(
                 height: boardSize,
-                width: boardSize + 48,
-                padding: EdgeInsets.only(left: 24),
-                child: Row(children: [
+                width: width,
+                padding: const EdgeInsets.only(left: sidePadding),
+                child: Row(children: <Widget>[
                   Container(
                       decoration: BoxDecoration(
                         border: Border.all(),
@@ -188,22 +196,23 @@ class ShogiBanState extends State<ShogiBan> {
                       height: boardSize,
                       child: Stack(
                         children: <Widget>[
-                          ...board.onBoard.map((e) => _PlayingKoma(
+                          ...board.onBoard.map((_Koma e) => _PlayingKoma(
                               key: ValueKey<_KomaId>(board.idOf(e)),
                               boardSize: boardSize,
                               koma: e))
                         ],
                       )),
                   Container(
-                      width: 24,
+                      width: sidePadding,
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: '一,二,三,四,五,六,七,八,九'
                               .split(',')
-                              .map((x) => Text(x))
+                              .map((String x) => SizedBox(
+                                  height: boardSize / 9, child: Text(x)))
                               .toList()))
                 ])),
-            Padding(padding: EdgeInsets.only(top: 12)),
+            const Padding(padding: EdgeInsets.only(top: 12)),
             Container(
                 width: boardSize,
                 alignment: Alignment.bottomLeft,
@@ -215,33 +224,31 @@ class ShogiBanState extends State<ShogiBan> {
                   height: boardSize / 4,
                   child: Wrap(
                     children: <Widget>[
-                      ...board.senteMochiGoma.map((e) => _KomaTip(
+                      ...board.senteMochiGoma.map((_Koma e) => _KomaTip(
                           e.koma, boardSize / 9,
                           key: ValueKey<_KomaId>(board.idOf(e))))
                     ],
                   ),
                 )),
-            Padding(padding: EdgeInsets.only(top: 12)),
+            const Padding(padding: EdgeInsets.only(top: 12)),
             Row(
-              children: [
+              children: <Widget>[
                 RaisedButton(
-                  child: Text('init'),
+                  child: const Text('init'),
                   onPressed: () {
-                    setState(() {
-                      widget.init();
-                    });
+                    setState(init);
                   },
                 ),
                 RaisedButton(
-                  child: Text('prev'),
+                  child: const Text('prev'),
                   onPressed: () {
-                    setState(widget.popHistory);
+                    setState(popHistory);
                   },
                 ),
                 RaisedButton(
-                  child: Text('next'),
+                  child: const Text('next'),
                   onPressed: () {
-                    setState(widget.nextScenario);
+                    setState(nextScenario);
                   },
                 )
               ],
@@ -403,23 +410,27 @@ extension OwnerEnum on Owner {
   Owner get opposite => isRemoved ? null : (isSente ? Owner.gote : Owner.sente);
 }
 
+@immutable
 class _Position {
-  _Position(this.x, this.y)
-      : assert(1 <= x && x <= 9 || x == 0 && y == 0),
-        assert(1 <= y && y <= 9 || y == 0 && x == 0);
-  static _Position get taken => _Position(0, 0);
+  const _Position(this.x, this.y)
+      : assert(1 <= x && x <= 9 || x == 0 && y == 0,
+            'x must be 1 to 9 or use _Position.taken'),
+        assert(1 <= y && y <= 9 || y == 0 && x == 0,
+            'y must be 1 to 9 or use _Position.taken');
+  static _Position taken = const _Position(0, 0);
 
   final int x;
   final int y;
 
   @override
-  operator ==(Object other) =>
+  bool operator ==(Object other) =>
       other is _Position && x == other.x && y == other.y;
 
   @override
   int get hashCode => hashList(<Object>[x, y]);
 }
 
+@immutable
 class _KomaPosition {
   const _KomaPosition(this.owner, this.position);
   final Owner owner;
@@ -429,7 +440,7 @@ class _KomaPosition {
   _KomaPosition moveTo(_Position position) => _KomaPosition(owner, position);
 
   @override
-  operator ==(Object other) =>
+  bool operator ==(Object other) =>
       other is _KomaPosition &&
       owner == other.owner &&
       position == other.position;
@@ -440,17 +451,18 @@ class _KomaPosition {
 
 class _Koma {
   const _Koma(this.koma, this.komaPosition);
-  _Koma get taken => _Koma(this.koma, this.komaPosition.taken);
+  _Koma get taken => _Koma(koma, komaPosition.taken);
 
   final Koma koma;
   final _KomaPosition komaPosition;
 }
 
+@immutable
 class _KomaId {
   const _KomaId(this._key);
   final int _key;
   @override
-  operator ==(Object other) => other is _KomaId && _key == other._key;
+  bool operator ==(Object other) => other is _KomaId && _key == other._key;
 
   @override
   int get hashCode => _key;
@@ -458,21 +470,25 @@ class _KomaId {
 
 class _Board {
   _Board(List<_Koma> komaList)
-      : _komaMap = komaList
-            .asMap()
-            .map<_KomaId, _Koma>((key, value) => MapEntry(_KomaId(key), value));
+      : _komaMap = komaList.asMap().map<_KomaId, _Koma>(
+            (int key, _Koma value) =>
+                MapEntry<_KomaId, _Koma>(_KomaId(key), value));
 
   _Board.fromSnapShot(Map<_KomaId, _Koma> snapShot)
-      : _komaMap = Map.from(snapShot);
+      : _komaMap = Map<_KomaId, _Koma>.from(snapShot);
 
   final Map<_KomaId, _Koma> _komaMap;
-  Map<_KomaId, _Koma> get snapShot => Map.unmodifiable(_komaMap);
+  Map<_KomaId, _Koma> get snapShot =>
+      Map<_KomaId, _Koma>.unmodifiable(_komaMap);
 
-  _KomaId idOf(_Koma koma) =>
-      _komaMap.entries.where((e) => e.value == koma).first.key;
+  _KomaId idOf(_Koma koma) => _komaMap.entries
+      .where((MapEntry<_KomaId, _Koma> e) => e.value == koma)
+      .first
+      .key;
 
   _KomaId idOfPosition(_KomaPosition position) {
-    final a = _komaMap.entries.where((e) => e.value.komaPosition == position);
+    final Iterable<MapEntry<_KomaId, _Koma>> a = _komaMap.entries.where(
+        (MapEntry<_KomaId, _Koma> e) => e.value.komaPosition == position);
     if (a.isEmpty) {
       return null;
     }
@@ -480,7 +496,7 @@ class _Board {
   }
 
   void moveTo(_KomaId id, _KomaPosition position) {
-    final taken =
+    final _KomaId taken =
         idOfPosition(_KomaPosition(position.owner.opposite, position.position));
     if (taken != null) {
       take(taken);
@@ -496,21 +512,21 @@ class _Board {
       _Koma(_komaMap[id].koma.toFront, _komaMap[id].komaPosition.taken);
 
   List<_Koma> get goteMochiGoma => _komaMap.values
-      .where((e) =>
+      .where((_Koma e) =>
           e.komaPosition.owner.isGote &&
           e.komaPosition.position == _Position.taken)
       .toList()
-        ..sort((a, b) =>
+        ..sort((_Koma a, _Koma b) =>
             Koma.values.indexOf(a.koma).compareTo(Koma.values.indexOf(b.koma)));
   List<_Koma> get senteMochiGoma => _komaMap.values
-      .where((e) =>
+      .where((_Koma e) =>
           e.komaPosition.owner.isSente &&
           e.komaPosition.position == _Position.taken)
       .toList()
-        ..sort((a, b) =>
+        ..sort((_Koma a, _Koma b) =>
             Koma.values.indexOf(a.koma).compareTo(Koma.values.indexOf(b.koma)));
   List<_Koma> get onBoard => _komaMap.values
-      .where((e) =>
+      .where((_Koma e) =>
           !e.komaPosition.owner.isRemoved &&
           e.komaPosition.position != _Position.taken)
       .toList();
@@ -527,7 +543,7 @@ class _KomaTip extends StatelessWidget {
         SizedBox(
             width: size,
             height: size,
-            child: Center(
+            child: const Center(
                 child: Text(
               '☖',
               style: TextStyle(fontSize: 24),
@@ -535,8 +551,7 @@ class _KomaTip extends StatelessWidget {
         Container(
             width: size,
             height: size,
-            alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.only(bottom: 2),
+            alignment: Alignment.center,
             child: Text(koma.name,
                 style: TextStyle(
                   color: koma.isNari ? Colors.red : null,
@@ -545,10 +560,10 @@ class _KomaTip extends StatelessWidget {
 }
 
 class _PlayingKoma extends StatefulWidget {
-  _PlayingKoma({Key key, this.boardSize, this.koma}) : super(key: key);
+  const _PlayingKoma({Key key, this.boardSize, this.koma}) : super(key: key);
 
   final double boardSize;
-  _Koma koma;
+  final _Koma koma;
 
   @override
   State<StatefulWidget> createState() => _PlayingKomaState();
@@ -565,20 +580,20 @@ class _PlayingKomaState extends State<_PlayingKoma> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedPositioned.fromRect(
-        duration: Duration(milliseconds: 120),
-        rect: komaPosition.owner.isRemoved
-            ? const SizedBox()
-            : Rect.fromPoints(
-                Offset(
-                  widget.boardSize - _size * komaPosition.position.x,
-                  _size * (komaPosition.position.y - 1),
-                ),
-                Offset(
-                  widget.boardSize - _size * (komaPosition.position.x - 1),
-                  _size * komaPosition.position.y,
-                ),
+    return komaPosition.owner.isRemoved
+        ? const SizedBox()
+        : AnimatedPositioned.fromRect(
+            duration: const Duration(milliseconds: 120),
+            rect: Rect.fromPoints(
+              Offset(
+                widget.boardSize - _size * komaPosition.position.x,
+                _size * (komaPosition.position.y - 1),
               ),
-        child: _komaTip);
+              Offset(
+                widget.boardSize - _size * (komaPosition.position.x - 1),
+                _size * komaPosition.position.y,
+              ),
+            ),
+            child: _komaTip);
   }
 }
