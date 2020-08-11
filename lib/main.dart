@@ -142,6 +142,54 @@ class ShogiBanState extends State<ShogiBan> {
     super.initState();
   }
 
+  List<Widget> _mochiGoma(List<_Koma> mochiGoma, double boardSize) => <Widget>[
+        ...mochiGoma
+            .fold(<Koma, int>{}, (Map<Koma, int> m, _Koma k) {
+              if (m.containsKey(k.koma)) {
+                m[k.koma]++;
+              } else {
+                m[k.koma] = 1;
+              }
+              return m;
+            })
+            .entries
+            .map((MapEntry<Koma, int> ent) => Stack(children: <Widget>[
+                  ...Iterable<Widget>.generate(
+                      ent.value,
+                      (int i) => Container(
+                          padding: EdgeInsets.only(
+                              top: (i % 7) * 8.0,
+                              left: boardSize / 18 * (i / 7).floorToDouble()),
+                          child: _KomaTip(ent.key, boardSize / 9))),
+                ]))
+      ];
+
+  Widget _xAxis(double boardSize) => Container(
+      width: boardSize,
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: '9,8,7,6,5,4,3,2,1'
+              .split(',')
+              .map((String x) =>
+                  SizedBox(width: boardSize / 9, child: Center(child: Text(x))))
+              .toList()));
+
+  Widget _yAxis(double sidePadding, double boardSize) => Container(
+      width: sidePadding,
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: '一,二,三,四,五,六,七,八,九'
+              .split(',')
+              .map((String x) => Container(
+                  alignment: Alignment.center,
+                  height: boardSize / 9,
+                  child: Text(x)))
+              .toList()));
+  Widget _grid(double boardSize) => CustomPaint(
+        size: Size(boardSize, boardSize),
+        painter: const _GridPainter(),
+      );
+
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mq = MediaQuery.of(context);
@@ -163,54 +211,43 @@ class ShogiBanState extends State<ShogiBan> {
                         decoration: BoxDecoration(
                           border: Border.all(),
                         ),
-                        width: boardSize / 2,
+                        width: boardSize,
                         height: boardSize / 4,
                         child: Wrap(
-                          children: <Widget>[
-                            ...board.goteMochiGoma.map((_Koma e) => _KomaTip(
-                                e.koma, boardSize / 9,
-                                key: ValueKey<_KomaId>(board.idOf(e))))
-                          ],
+                          children: _mochiGoma(board.goteMochiGoma, boardSize),
                         )))),
             const Padding(padding: EdgeInsets.only(top: 12)),
-            Container(
-                width: boardSize,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: '9,8,7,6,5,4,3,2,1'
-                        .split(',')
-                        .map((String x) => SizedBox(
-                            width: boardSize / 9,
-                            child: Center(child: Text(x))))
-                        .toList())),
+            _xAxis(boardSize),
             Container(
                 height: boardSize,
                 width: width,
                 padding: const EdgeInsets.only(left: sidePadding),
                 child: Row(children: <Widget>[
-                  Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                      ),
+                  Stack(children: <Widget>[
+                    Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.amber,
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(blurRadius: 2.0),
+                            BoxShadow(offset: Offset(1, 1), blurRadius: 3.0)
+                          ]),
                       width: boardSize,
                       height: boardSize,
-                      child: Stack(
-                        children: <Widget>[
-                          ...board.onBoard.map((_Koma e) => _PlayingKoma(
-                              key: ValueKey<_KomaId>(board.idOf(e)),
-                              boardSize: boardSize,
-                              koma: e))
-                        ],
-                      )),
-                  Container(
-                      width: sidePadding,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: '一,二,三,四,五,六,七,八,九'
-                              .split(',')
-                              .map((String x) => SizedBox(
-                                  height: boardSize / 9, child: Text(x)))
-                              .toList()))
+                    ),
+                    _grid(boardSize),
+                    SizedBox(
+                        width: boardSize,
+                        height: boardSize,
+                        child: Stack(
+                          children: <Widget>[
+                            ...board.onBoard.map((_Koma e) => _PlayingKoma(
+                                key: ValueKey<_KomaId>(board.idOf(e)),
+                                boardSize: boardSize,
+                                koma: e))
+                          ],
+                        )),
+                  ]),
+                  _yAxis(sidePadding, boardSize),
                 ])),
             const Padding(padding: EdgeInsets.only(top: 12)),
             Container(
@@ -220,14 +257,10 @@ class ShogiBanState extends State<ShogiBan> {
                   decoration: BoxDecoration(
                     border: Border.all(),
                   ),
-                  width: boardSize / 2,
+                  width: boardSize,
                   height: boardSize / 4,
                   child: Wrap(
-                    children: <Widget>[
-                      ...board.senteMochiGoma.map((_Koma e) => _KomaTip(
-                          e.koma, boardSize / 9,
-                          key: ValueKey<_KomaId>(board.idOf(e))))
-                    ],
+                    children: _mochiGoma(board.senteMochiGoma, boardSize),
                   ),
                 )),
             const Padding(padding: EdgeInsets.only(top: 12)),
@@ -268,10 +301,10 @@ enum Koma {
   fu,
   kyoSha,
   keiMa,
-  hiSha,
-  kaku,
   ginSho,
   kinSho,
+  hiSha,
+  kaku,
   ohSho,
   gyokuSho,
   toKin,
@@ -417,7 +450,7 @@ class _Position {
             'x must be 1 to 9 or use _Position.taken'),
         assert(1 <= y && y <= 9 || y == 0 && x == 0,
             'y must be 1 to 9 or use _Position.taken');
-  static _Position taken = const _Position(0, 0);
+  static const _Position taken = _Position(0, 0);
 
   final int x;
   final int y;
@@ -449,6 +482,7 @@ class _KomaPosition {
   int get hashCode => hashList(<Object>[owner, position]);
 }
 
+@immutable
 class _Koma {
   const _Koma(this.koma, this.komaPosition);
   _Koma get taken => _Koma(koma, komaPosition.taken);
@@ -545,8 +579,14 @@ class _KomaTip extends StatelessWidget {
             height: size,
             child: const Center(
                 child: Text(
-              '☖',
-              style: TextStyle(fontSize: 24),
+              '☗',
+              style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.amberAccent,
+                  shadows: <Shadow>[
+                    Shadow(blurRadius: 3),
+                    Shadow(offset: Offset(1.5, 1.5), blurRadius: 2)
+                  ]),
             ))),
         Container(
             width: size,
@@ -596,4 +636,47 @@ class _PlayingKomaState extends State<_PlayingKoma> {
             ),
             child: _komaTip);
   }
+}
+
+class _GridPainter extends CustomPainter {
+  const _GridPainter({Listenable repaint}) : super(repaint: repaint);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double pitch = size.width / 9;
+    final Paint paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    final Path path = Path();
+
+    final Paint dotsFill = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 1.0;
+    final Path dots = Path();
+    for (int x = 1; x < 9; x++) {
+      path
+        ..moveTo(pitch * x, 0)
+        ..lineTo(pitch * x, size.height);
+    }
+    for (int y = 1; y < 9; y++) {
+      path
+        ..moveTo(0, pitch * y)
+        ..lineTo(size.width, pitch * y);
+    }
+    dots
+      ..addOval(Rect.fromCenter(
+          center: Offset(pitch * 3, pitch * 3), width: 5, height: 5))
+      ..addOval(Rect.fromCenter(
+          center: Offset(pitch * 3, pitch * 6), width: 5, height: 5))
+      ..addOval(Rect.fromCenter(
+          center: Offset(pitch * 6, pitch * 3), width: 5, height: 5))
+      ..addOval(Rect.fromCenter(
+          center: Offset(pitch * 6, pitch * 6), width: 5, height: 5));
+    canvas..drawPath(path, paint)..drawPath(dots, dotsFill);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
