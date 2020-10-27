@@ -1,16 +1,8 @@
 # shogi_ban
 
-A new Flutter project.
+将棋盤UIのデモです
 
-## Getting Started
+Fulutterのユーザーグループ(Discord)にて、質問に対しAnimatedPositionedを使用した場合の例として作成しました
 
-This project is a starting point for a Flutter application.
+URL: https://discordapp.com/channels/585962760647737356/586190834551226398/742421627421196398
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
