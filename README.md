@@ -2,7 +2,7 @@
 
 将棋盤UIのデモです
 
-Fulutterのユーザーグループ(Discord)にて、質問に対しAnimatedPositionedを使用した場合の例として作成しました
+[Fulutterのユーザーグループ(Discord)](https://discord.gg/uyqj9CGsNE)にて、質問に対しAnimatedPositionedを使用した場合の例として作成しました
 
 ![動画サムネイル](https://github.com/aya-eiya/shogi-ban/blob/master/doc/images/sc.gif?raw=true)
 
